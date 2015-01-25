@@ -1,33 +1,33 @@
 <?
 
-	$handle = fopen("../SQLinfo", "r");
-	if ($handle) {
-	    while (($line = fgets($handle)) !== false) {
-	         echo $line;
-	    }
-	    fclose($handle);
-	} else {
-	    // error opening the file.
-	} 
+	function ConSQL(){
+
+		$handle = fopen("../SQLinfo", "r");
+		if ($handle) {
+			$server = fgets($handle);
+			$username = fgets($handle);
+			$password = fgets($handle);
+			$database = fgets($handle);
+		    fclose($handle);
+		} else {
+		    // error opening the file.
+		} 
+
+		try
+		{
+		    $conn = new PDO("sqlsrv:server=$server ; Database = $database", $username, $password);
+		}
+		catch(Exception $e)
+		{
+		    die(print_r($e));
+		}
+		return $conn
+	}
 
 
-	
-	// $server = "ServerID.database.windows.net,1433";
-	// $username = "Username@ServerID";
-	// $password = "Password";
-	// $database = "DbName";
-
-
-	// try
-	// {
-	//     $conn = new PDO("sqlsrv:server=$server ; Database = $database", $username, $password);
-	// }
-	// catch(Exception $e)
-	// {
-	//     die(print_r($e));
-	// }
-
-
+	$MySQLPDO = ConSQL();
+	$_result = $MySQLPDO->query("SHOW TABLES");
+	echo "hello World!!";
 
 
 
