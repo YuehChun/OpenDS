@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,6 +37,21 @@
     <script type="text/javascript">
         var d = new Date();
         var map;
+        var SyncElems = {
+            'hospital': false,
+            'ambulance': false,
+            'person': false
+        }
+        var hosMarkers = [], polMarkers = [], sheMarkers = [];
+        var hosContent = {}, polContent = {}, sheContent = {};
+        var MapElems = {
+            'hospital': false,
+            'police': false,
+            'emergency': false,
+            'shelter': false,
+            'ambulance': false,
+            'person': false
+        }
         google.maps.event.addDomListener(window, 'load', initialize);
         MainPageTimeout();
     </script>
@@ -56,17 +72,17 @@
 							 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown<strong class="caret"></strong></a>
 							<ul class="dropdown-menu">
 								<li>
-							        <a href="ambulance.html">Ambulance Page</a>
+							        <a href="#">Ambulance Page</a>
 								</li>
 								<li>
-							        <a href="person.html">Person Page</a>
+							        <a href="#">Person Page</a>
 								</li>
 								<li>
 							        <a href="#">Hospital Page</a>
 								</li>
 								<li class="divider"></li>
 								<li>
-									<a href="index.html">Main Page</a>
+									<a href="#">Main Page</a>
 								</li>
 							</ul>
 						</li>
@@ -78,35 +94,6 @@
     </div>
 	<div class="row clearfix">
 		<div class="col-md-12 column">
-
-            <div class="col-md-10 column">
-                <div class="btn-group ">
-                    <button type="button" class="btn btn-info " onclick="SyncData('hospital');" id="synchospital">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyhospital"></span>
-                        Sync Hospital
-                    </button>
-                    <button type="button" class="btn btn-info " onclick="SyncData('ambulance')" id="syncambulance">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyambulance"></span>
-                        Sync Ambulance
-                    </button>
-                    <button type="button" class="btn btn-info " onclick="SyncData('person')" id="syncperson">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyperson"></span>
-                        Sync Person
-                    </button>
-                    <button type="button" class="btn btn-info " onclick="SyncData('injured')" id="syncinjured">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyinjured"></span>
-                        Sync Injured
-                    </button>
-                    <button type="button" class="btn btn-info " onclick="SyncData('disaster')" id="syncdisaster">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glydisaster"></span>
-                        Sync Disaster
-                    </button>
-                    <button type="button" class="btn btn-info " onclick="SyncData('supplies')" id="syncsupplies">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glysupplies"></span>
-                        Sync Supplies
-                    </button>
-                </div>
-            </div>
 		    <div class="col-md-10 column">
 			    <div class="jumbotron" id="jumbotron" style="height: 650px"></div>
 		    </div>
@@ -130,15 +117,6 @@
                      <button class="btn btn-default" type="button" id="person" onclick="actionStatus('person');">
                          <img alt="鄉民" src="img/icon/person.png" height="20"> Person
                      </button>
-                     <button class="btn btn-default" type="button" id="disaster" onclick="actionStatus('disaster');">
-                         <img alt="災害點" src="img/icon/disaster.png" height="20"> Disaster
-                     </button>
-                     <button class="btn btn-default" type="button" id="person" onclick="actionStatus('injured');">
-                         <img alt="傷患點" src="img/icon/injured.png" height="20"> Injured
-                     </button>
-                     <button class="btn btn-default" type="button" id="person" onclick="actionStatus('supplies');">
-                         <img alt="物資點" src="img/icon/supplies.png" height="20"> Supplies
-                     </button>
                 </div>
 	        </div>
             <div class="col-md-2 column">
@@ -149,17 +127,25 @@
                 <p id="UpTime_ambulance">2014-00-00 12:00:00</p>
                 <span class="label label-success">person</span>
                 <p id="UpTime_person">2014-00-00 12:00:00</p>
-                <span class="label label-warning">injured</span>
-                <p id="UpTime_injured">2014-00-00 12:00:00</p>
-                <span class="label label-warning">disaster</span>
-                <p id="UpTime_disaster">2014-00-00 12:00:00</p>
-                <span class="label label-warning">supplies</span>
-                <p id="UpTime_supplies">2014-00-00 12:00:00</p>
 	        </div>
 	    </div>
     </div>
 	<div class="row clearfix">
 		<div class="col-md-12 column">
+			<div class="btn-group ">
+                <button type="button" class="btn btn-info btn-lg" onclick="SyncData('hospital');" id="synchospital">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyhospital"></span>
+                    Sync Hospital
+                </button>
+                <button type="button" class="btn btn-info btn-lg" onclick="SyncData('ambulance')" id="syncambulance">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyambulance"></span>
+                    Sync Ambulance
+                </button>
+                <button type="button" class="btn btn-info btn-lg" onclick="SyncData('person')" id="syncperson">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyperson"></span>
+                    Sync Person
+                </button>
+            </div>
         </div>
 	</div>
 </div>

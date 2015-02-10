@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <title>婉君護台灣-救護車系統</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <!--link rel="stylesheet/less" href="less/bootstrap.less" type="text/css" /-->
+  <!--link rel="stylesheet/less" href="less/responsive.less" type="text/css" /-->
+  <!--script src="js/less-1.3.3.min.js"></script-->
+  <!--append ‘#!watch’ to the browser URL, then refresh the page. -->
+
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+
+  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+  <![endif]-->
+
+  <!-- Fav and touch icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/apple-touch-icon-144-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/apple-touch-icon-114-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/apple-touch-icon-72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" href="img/apple-touch-icon-57-precomposed.png">
+  <link rel="shortcut icon" href="img/favicon.png">
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/markerclusterer.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
+  <script type="text/javascript" src="js/SyncMap.js"></script>
+  <script type="text/javascript" src="js/SysMap.js"></script>
+  <script type="text/javascript" src="js/SysAmbulance.js"></script>
+  <script type="text/javascript">
+    var map;
+    var AmbID,IP,lat = 25.045969,lng = 121.513196,TaskObj;
+    var d = new Date();
+    var PostTimer = 10000;
+    var MyAmbMarker = new google.maps.Marker({
+                      'position': new google.maps.LatLng(lat, lng),
+                      'icon': myambulanceImg
+                  });
+   
+    google.maps.event.addDomListener(window, 'load', initialize);
+    AmbulanceTimeout();
+  </script>
+  <script src="http://opends.azurewebsites.net/api/dynamic/getClientIp.php?callback=SysGetIP"></script>
+  </head>
+  <body>
+<div class="container">
+  <div class="row clearfix">
+    <div class="col-md-12 column">
+      <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"> <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button> <a class="navbar-brand" href="#" id="LogID">NCHU-DMLab :: Ambulance</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown<strong class="caret"></strong></a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a href="ambulance.html">Ambulance Page</a>
+                </li>
+                <li>
+                  <a href="person.html">Person Page</a>
+                </li>
+                <li>
+                  <a href="#">Hospital Page</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                  <a href="index.html">Main Page</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+      </nav>
+        </div>
+    </div>
+  <div class="row clearfix">
+    <div class="col-md-12 column">
+        <div class="col-md-6 column">
+          <div class="jumbotron" id="jumbotron" style="height: 500px"></div>
+        </div>
+        <div class="col-md-2 column">
+                <div class="btn-group btn-group-vertical btn-group-lg" id="buttonGroup">
+                     <button class="btn btn-default" type="button" id="hospital" onclick="actionStatus('hospital');">
+                         <img alt="醫院" src="img/icon/hospital.png" height="20"> Hospital
+                     </button>
+                     <button class="btn btn-default" type="button" id="person" onclick="actionStatus('injured');">
+                         <img alt="傷患點" src="img/icon/injured.png" height="20"> Injured
+                     </button>
+                     <button class="btn btn-default" type="button" id="disaster" onclick="actionStatus('disaster');">
+                         <img alt="災害點" src="img/icon/disaster.png" height="20"> Disaster
+                     </button>
+                     <button class="btn btn-default" type="button" id="supplies" onclick="actionStatus('supplies;">
+                         <img alt="物資點" src="img/icon/supplies.png" height="20"> Supplies
+                     </button>
+                </div>
+                <div>
+                      <h3 class="text-success">Last Updated</h3>
+                      <span class="label label-success">hospital</span>
+                      <p id="UpTime_hospital">2014-01-01 12:00:00</p>
+                      <span class="label label-success">ambulance</span>
+                      <p id="UpTime_ambulance">2014-01-01 12:00:00</p>
+                      <span class="label label-warning">injured</span>
+                      <p id="UpTime_injured">2014-00-00 12:00:00</p>
+                      <span class="label label-warning">disaster</span>
+                      <p id="UpTime_disaster">2014-00-00 12:00:00</p>
+                      <span class="label label-warning">supplies</span>
+                      <p id="UpTime_supplies">2014-00-00 12:00:00</p>
+                      <span class="label label-primary">location</span>
+                      <p id="UpTime_location">2014-01-01 12:00:00</p>
+                </div>
+        </div>
+        <div class="col-md-4 column">
+          <button type="button" class="btn btn-success btn-block" onclick="getTask();">GET TASK !</button>
+          <div class="panel-group" id="panel-883245">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                 <a class="panel-title" data-toggle="collapse" data-parent="#panel-883245" href="#panel-element-589118">任務路線表單</a>
+              </div>
+              <div id="panel-element-589118" class="panel-collapse in">
+                <div class="panel-body" id="taskCom">
+                  
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                 <a class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-883245" href="#panel-element-77572">送醫資訊表單</a>
+              </div>
+              <div id="panel-element-77572" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <form role="form">
+                    <fieldset disabled>
+                      <div class="input-group">
+                        <div class="input-group-addon">Case ID:</div>
+                        <input type="text" disabled="ture" class="form-control" id="Number ID" placeholder="Number injuries">
+                      </div>
+                      <div class="input-group">
+                        <div class="input-group-addon">Hospital Name:</div>
+                        <input type="text" class="form-control" id="exampleInputAmount" placeholder="Pre- hospital">
+                      </div>
+                    </fieldset>
+                    <p class="help-block">  </p>
+                    <div class="form-group">
+                       <label for="Ambulance_Name">Name</label><input type="text" class="form-control" id="Ambulance_Name" />
+                    </div>
+                    <div class="form-group">
+                       <label for="Ambulance_Name">Contact person</label>
+                       <input type="text" class="form-control" id="Ambulance_Name" placeholder="Get somebody a message!"/>
+                    </div>
+                    <div class="form-group">
+                       <label for="Ambulance_Name">Age</label><input type="text" class="form-control" id="Ambulance_Name" placeholder="Visual Age"/>
+                    </div>
+                    <div class="checkbox">
+                       <label><input type="checkbox" /> Check me out</label>
+                    </div> <button type="submit" class="btn btn-default">Submit</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <div class="row clearfix">
+    <div class="col-md-12 column">
+      <div class="btn-group ">
+            <button type="button" class="btn btn-info btn-lg" onclick="SyncData('hospital');" id="synchospital">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyhospital"></span>
+                Sync Hospital
+            </button>
+            <button type="button" class="btn btn-info btn-lg" onclick="SyncData('ambulance')" id="syncambulance">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyambulance"></span>
+                Sync Ambulance
+            </button>
+            <button type="button" class="btn btn-info btn-lg" onclick="SyncData('person')" id="syncperson">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyperson"></span>
+                Sync Person
+            </button>
+      </div>
+    </div>
+  </div>
+</div>
+  </body>
+</html>

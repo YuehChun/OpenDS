@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Waypoints in directions</title>
+    <style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+      #panel {
+        position: absolute;
+        top: 5px;
+        left: 50%;
+        margin-left: -180px;
+        background-color: #fff;        z-index: 5;
+
+        padding: 5px;
+        border: 1px solid #999;
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
+    <script>
+        var directionsDisplay;
+        var directionsService = new google.maps.DirectionsService();
+        var map;
+
+        function initialize() {
+            directionsDisplay = new google.maps.DirectionsRenderer();
+            var taiwan = new google.maps.LatLng(23.5413701, 120.9276791);
+            var mapOptions = {
+                zoom: 8,
+                center: taiwan
+            }
+            map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+            directionsDisplay.setMap(map);
+        }
+
+        function calcRoute() {
+            var start = document.getElementById('start').value;
+            var end = document.getElementById('end').value;
+            var waypts = [];
+            var checkboxArray = document.getElementById('waypoints');
+            for (var i = 0; i < checkboxArray.length; i++) {
+                if (checkboxArray.options[i].selected == true) {
+                    waypts.push({
+                        location: checkboxArray[i].value,
+                        stopover: false
+                    });
+                }
+            }
+            var request = {
+                origin: start,
+                destination: end,
+                waypoints: waypts,
+                optimizeWaypoints: true,
+                provideRouteAlternatives: true,
+                travelMode: google.maps.TravelMode.DRIVING
+            };
+            directionsService.route(request, function (response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    alert(JSON.stringify(response));
+                    directionsDisplay.setDirections(response);
+                    var route = response.routes[0];
+                }
+            });
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas" style="float:left;width:70%;height:100%;"></div>
+    <div id="control_panel" style="float:right;width:30%;text-align:left;padding-top:20px">
+    <div style="margin:20px;border-width:2px;">
+    <b>Start:</b>
+    <select id="start">
+      <option value="中興大學">中興大學</option>
+      <option value="台中教育大學">台中教育大學</option>
+      <option value="中山醫學大學">中山醫學大學</option>
+      <option value="台灣體育大學">台灣體育大學</option>
+    </select>
+    <br>
+    <b>Waypoints:</b> <br>
+    <i>(Ctrl-Click for multiple selection)</i> <br>
+    <select multiple id="waypoints">
+      <option value="台中市 國光國小">國光國小</option>
+      <option value="台中市 大里高中">大里高中</option>
+      <option value="台中市 雙十國中">雙十國中</option>
+      <option value="台中市 四育國中">四育國中</option>
+      <option value="台中市 宜寧高中">宜寧高中</option>
+      <option value="台中市 崇倫國中">崇倫國中</option>
+      <option value="台中市 台中高工">台中高工</option>
+    </select>
+    <br>
+    <b>End:</b>
+    <select id="end">
+      <option value="台中市 台中火車站">台中火車站</option>
+      <option value="台中市 新時代購物中心">新時代購物中心</option>
+      <option value="台中市 台中公園">台中公園</option>
+    </select>
+    <br>
+      <input type="submit" onclick="calcRoute();">
+    </div>
+    <div id="directions_panel" style="margin:20px;background-color:#FFEE77;"></div>
+    </div>
+  </body>
+</html>
