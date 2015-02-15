@@ -1,19 +1,11 @@
 <?
+//把這個改成跟person一樣
 header("Access-Control-Allow-Origin: *");
 include_once "../../../SQLinfo2.php";
 //index when make marker
 $Days = is_null($_GET['Days'])?1:$_GET['Days'];
-$Ambs = $_conSQL->query("select IP,MAX(AmbulanceID) as AmbID from Ambulance where status='1' and datetime > '".date("Y-m-d H:i:s" , time()-(86400*$Days))."' group by IP")->fetchall(PDO::FETCH_ASSOC);
-foreach($Ambs as $Key => $Value){
-	$AmbID = $Value['AmbID'];
-	$LastPosition = $_conSQL->query("select TOP 1 * from AmbulanceInTimePoint where AmbulanceID='".$Value['AmbID']."' and IP='".$Value['IP']."' order by datetime DESC")->fetch(PDO::FETCH_ASSOC);
-	if(is_null($LastPosition['pointID'])){
-
-	}else{
-		$Position[$AmbID] = $LastPosition;
-	}
-}
-echo json_encode($Position, JSON_UNESCAPED_UNICODE);
+$Ambs = $_conSQL->query("select AmbulanceID as AmbID,lng,lat,convert(VARCHAR(24),datetime, 20) as time from AmbulanceInTimePoint where pointID in (select max(pointID) as pointID from AmbulanceInTimePoint where datetime > '" . date("Y-m-d H:i:s", time() - (86400 * $Days)) . "' group by AmbulanceID)")->fetchall(PDO::FETCH_ASSOC);
+echo json_encode($Ambs, JSON_UNESCAPED_UNICODE);
 exit();
 /*
 //敘述在後面到時候在加

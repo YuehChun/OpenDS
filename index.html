@@ -30,14 +30,25 @@
 	<script type="text/javascript" src="js/markerclusterer.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
 
-
+    <script type="text/javascript" src="js/SysContent.js"></script>
 	<script type="text/javascript" src="js/SyncMap.js"></script>
 	<script type="text/javascript" src="js/SysMap.js"></script>
     <script type="text/javascript">
         var d = new Date();
         var map;
         google.maps.event.addDomListener(window, 'load', initialize);
+          function InitMap(map){
+            ambulancebMarkers(map);
+            hospitalMarkers(map);
+            injuredMarkers(map);
+            personMarkers(map);
+            disasterMarkers(map);
+            suppliesMarkers(map);
+            policeMarkers(map);
+            shelterMarkers(map);
+          }
         MainPageTimeout();
+
     </script>
 </head>
 
@@ -53,108 +64,113 @@
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<ul class="nav navbar-nav navbar-right">
 						<li class="dropdown">
-							 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown<strong class="caret"></strong></a>
+							 <a href="#" class="dropdown-toggle" data-toggle="dropdown">切換頁面<strong class="caret"></strong></a>
 							<ul class="dropdown-menu">
 								<li>
-							        <a href="ambulance.html">Ambulance Page</a>
+							        <a href="ambulance.html">我是救護車</a>
 								</li>
 								<li>
-							        <a href="person.html">Person Page</a>
+							        <a href="person.html">我是鄉民</a>
 								</li>
 								<li>
-							        <a href="#">Hospital Page</a>
+							        <a href="#">我是醫院</a>
 								</li>
 								<li class="divider"></li>
 								<li>
-									<a href="index.html">Main Page</a>
+									<a href="index.html">我是醫院</a>
 								</li>
 							</ul>
 						</li>
 					</ul>
 				</div>
-
 			</nav>
         </div>
     </div>
-	<div class="row clearfix">
-		<div class="col-md-12 column">
-
-            <div class="col-md-10 column">
-                <div class="btn-group ">
-                    <button type="button" class="btn btn-info " onclick="SyncData('hospital');" id="synchospital">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyhospital"></span>
-                        Sync Hospital
-                    </button>
-                    <button type="button" class="btn btn-info " onclick="SyncData('ambulance')" id="syncambulance">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyambulance"></span>
-                        Sync Ambulance
-                    </button>
-                    <button type="button" class="btn btn-info " onclick="SyncData('person')" id="syncperson">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyperson"></span>
-                        Sync Person
-                    </button>
-                    <button type="button" class="btn btn-info " onclick="SyncData('injured')" id="syncinjured">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyinjured"></span>
-                        Sync Injured
-                    </button>
-                    <button type="button" class="btn btn-info " onclick="SyncData('disaster')" id="syncdisaster">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glydisaster"></span>
-                        Sync Disaster
-                    </button>
-                    <button type="button" class="btn btn-info " onclick="SyncData('supplies')" id="syncsupplies">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glysupplies"></span>
-                        Sync Supplies
-                    </button>
-                </div>
+    <div class="row clearfix">
+        <div class="col-md-12 column" id="alertStatus">
+        </div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-md-12 column text-center">
+            <div class="btn-group ">
+                <button type="button" class="btn btn-info  btn-lg" onclick="SyncData('hospital');" id="synchospital">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyhospital"></span>
+                    醫院即時更新
+                </button>
+                <button type="button" class="btn btn-info  btn-lg" onclick="SyncData('ambulance')" id="syncambulance">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyambulance"></span>
+                    救護車即時更新
+                </button>
+                <button type="button" class="btn btn-info  btn-lg" onclick="SyncData('person')" id="syncperson">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyperson"></span>
+                    鄉民即時更新
+                </button>
+                <button type="button" class="btn btn-info  btn-lg" onclick="SyncData('injured')" id="syncinjured">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyinjured"></span>
+                    傷患點即時更新
+                </button>
+                <button type="button" class="btn btn-info  btn-lg" onclick="SyncData('disaster')" id="syncdisaster">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glydisaster"></span>
+                    災害點即時更新
+                </button>
+                <button type="button" class="btn btn-info  btn-lg" onclick="SyncData('supplies')" id="syncsupplies">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glysupplies"></span>
+                    物資點即時更新
+                </button>
             </div>
+        </div>
+        <p></p>
+    </div>
+    <div class="row clearfix">
+		<div class="col-md-12 column">
 		    <div class="col-md-10 column">
 			    <div class="jumbotron" id="jumbotron" style="height: 650px"></div>
 		    </div>
-		    <div class="col-md-2 column">
+		    <div class="col-md-2 column text-right">
                 <div class="btn-group btn-group-vertical btn-group-lg" id="buttonGroup">
                      <button class="btn btn-default" type="button" id="hospital" onclick="actionStatus('hospital');">
-                         <img alt="醫院" src="img/icon/hospital.png" height="20"> Hospital
+                         <img alt="醫院" src="img/icon/hospital.png" height="20"> 醫院<span id="HosNum"></span>
                      </button>
                      <button class="btn btn-default" type="button" id="police" onclick="actionStatus('police');">
-                         <img alt="警察局" src="img/icon/Police.png" height="20"> Police
+                         <img alt="警察局" src="img/icon/Police.png" height="20"> 警察局<span id="PolNum"></span>
                      </button>
                      <button class="btn btn-default" type="button" id="shelter" onclick="actionStatus('shelter');">
-                         <img alt="避難點" src="img/icon/shelter.png" height="20"> Shelter
+                         <img alt="避難點" src="img/icon/shelter.png" height="20"> 避難點<span id="SheNum"></span>
                      </button>
                      <button class="btn btn-default" type="button" id="firefighting" onclick="actionStatus('firefighting');">
-                         <img alt="消防局" src="img/icon/firefighting.png" height="20"> Fire Station
+                         <img alt="消防局" src="img/icon/firefighting.png" height="20"> 消防局<span id="FirNum"></span>
                      </button>
                      <button class="btn btn-default" type="button" id="ambulance" onclick="actionStatus('ambulance');">
-                         <img alt="救護車" src="img/icon/Ambulance.png" height="20"> Ambulance
+                         <img alt="救護車" src="img/icon/Ambulance.png" height="20"> 救護車<span id="AmbNum"></span>
                      </button>
                      <button class="btn btn-default" type="button" id="person" onclick="actionStatus('person');">
-                         <img alt="鄉民" src="img/icon/person.png" height="20"> Person
+                         <img alt="鄉民" src="img/icon/person.png" height="20"> 鄉民<span id="PerNum"></span>
                      </button>
                      <button class="btn btn-default" type="button" id="disaster" onclick="actionStatus('disaster');">
-                         <img alt="災害點" src="img/icon/disaster.png" height="20"> Disaster
+                         <img alt="災害點" src="img/icon/disaster.png" height="20"> 災害點<span id="DisNum"></span>
                      </button>
-                     <button class="btn btn-default" type="button" id="person" onclick="actionStatus('injured');">
-                         <img alt="傷患點" src="img/icon/injured.png" height="20"> Injured
+                     <button class="btn btn-default" type="button" id="injured" onclick="actionStatus('injured');">
+                         <img alt="傷患點" src="img/icon/injured.png" height="20"> 傷患點<span id="InjNum"></span>
                      </button>
-                     <button class="btn btn-default" type="button" id="person" onclick="actionStatus('supplies');">
-                         <img alt="物資點" src="img/icon/supplies.png" height="20"> Supplies
+                     <button class="btn btn-default" type="button" id="supplies" onclick="actionStatus('supplies');">
+                         <img alt="物資點" src="img/icon/supplies.png" height="20"> 物資點<span id="SupNum"></span>
                      </button>
                 </div>
 	        </div>
             <div class="col-md-2 column">
-                <h3 class="text-success">Last Updated</h3>
-                <span class="label label-success">hospital</span>
-                <p id="UpTime_hospital">2014-00-00 12:00:00</p>
-                <span class="label label-success">ambulance</span>
-                <p id="UpTime_ambulance">2014-00-00 12:00:00</p>
-                <span class="label label-success">person</span>
-                <p id="UpTime_person">2014-00-00 12:00:00</p>
-                <span class="label label-warning">injured</span>
-                <p id="UpTime_injured">2014-00-00 12:00:00</p>
-                <span class="label label-warning">disaster</span>
-                <p id="UpTime_disaster">2014-00-00 12:00:00</p>
-                <span class="label label-warning">supplies</span>
-                <p id="UpTime_supplies">2014-00-00 12:00:00</p>
+                <h3 class="text-success">最後更新時間</h3>
+                <span class="label label-success">醫院</span>
+                <p id="UpTime_hospital"> - - - - </p>
+                <span class="label label-success">救護車</span>
+                <p id="UpTime_ambulance"> - - - - </p>
+                <span class="label label-success">鄉民</span>
+                <p id="UpTime_person"> - - - - </p>
+                <span class="label label-warning">傷患點</span>
+                <p id="UpTime_injured"> - - - - </p>
+                <span class="label label-warning">災害點</span>
+                <p id="UpTime_disaster"> - - - - </p>
+                <span class="label label-warning">物資點</span>
+                <p id="UpTime_supplies"> - - - - </p>
 	        </div>
 	    </div>
     </div>

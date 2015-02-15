@@ -1,39 +1,38 @@
     var waypts = [];
+    var firstmap = 0;
     var getTaskMsg='<div class="alert alert-dismissable alert-info">'+
       '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
-      '<h4>Require Task!</h4>' +
-      '<strong>Loading!</strong> Please waiting 5 second. Thank you !'+
+      '<h4>任務請求中!</h4>' +
+      '<strong>載入任務!</strong> 請稍候10秒，感謝您 !'+
     '</div>';
     var LoadDangerMsg='<div class="alert alert-dismissable alert-danger">'+
       '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
-      '<h4>Change Task!</h4>' +
-      '<strong>Check it!</strong> Please change your path. Thank you !'+
+      '<h4>任務改變!</h4>' +
+      '<strong>請確認任務!</strong> 請更改你的路線，感謝您 !'+
     '</div>';
+    
     function SysGetIP(IPjson) {
         IP=IPjson.IP;
         $.get("http://opends.azurewebsites.net/api/dynamic/AmbulanceInit.php?IP="+IP,function( result ){
           var newID = JSON.parse(result);
           AmbID=newID.AmbulanceID;
-          $("#LogID").html("NCHU-DMLab :: Ambulance :: "+ AmbID);
+          $("#LogID").html("NCHU-DMLab :: 救護車 :: "+ AmbID);
+          MyAmbMarker.setTitle(AmbID);
         });
         getLocation();
     }
+
     function getLocation() {
       // Try HTML5 geolocation
       if(navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-          MyAmbMarker.setMap(null);
           // lat = position.coords.latitude;
           // lng = position.coords.longitude;
           // temp
-          lat = 25.043832;
-          lng = 121.509034;
-          MyAmbMarker = new google.maps.Marker({
-                      'position': new google.maps.LatLng(lat, lng),
-                      'icon': myambulanceImg,
-                      'title' : AmbID
-                  });
-          MyAmbMarker.setMap(map);
+          lat = 25.041276;
+          lng = 121.50900;
+          map.setCenter(new google.maps.LatLng(lat,lng));
+          MyAmbMarker.setPosition(new google.maps.LatLng(lat,lng));
         }, function() {
           handleNoGeolocation(true);
         });
@@ -42,6 +41,8 @@
         handleNoGeolocation(false);
       }
     }
+
+    
     function getTask(){
       $("#taskCom").html(getTaskMsg);
       loadTask(); 
@@ -62,14 +63,24 @@
             travelMode: google.maps.TravelMode.DRIVING
         };
         directionsService.route(request, function (response, status) {
-            if (status == google.maps.DirectionsStatus.OK) {
-              // alert(JSON.stringify(response));
-              directionsDisplay.setDirections(response);
+            if (status == google.maps.DirectionsStatus.OK) {              directionsDisplay.setDirections(response);
               var LoadInfoMsg='<div class="alert alert-dismissable alert-info">'+
                 '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
                 '<h4>Get Task!</h4>' +
-                '<strong>Do Your Best!</strong> Get Task Time : '+newTaskObj.time+
+                '<strong>Do Your Best!</strong> Get Task Time : '+ newTaskObj.time +
               '!</div>';
+              var route = response.routes[0];
+              var Duration = "路程時間"+response.routes[0].legs[0].duration.text;
+              var PathCommand = '<h4>'+Duration+'</h4>';
+              // For each route, display summary information.
+              for (var i = 0; i < route.legs.length; i++) {
+                var routeSegment = i + 1;
+                PathCommand += '<b>路徑  ' + routeSegment + ': </b> <br>';
+                PathCommand += route.legs[i].start_address + ' to ';
+                PathCommand += route.legs[i].end_address + '<br>';
+                PathCommand += route.legs[i].distance.text + '<br><br>';
+              }
+              $("#taskCom").html(PathCommand);
             }else{
               // alert(JSON.stringify(response));
               alert("ERROR");
