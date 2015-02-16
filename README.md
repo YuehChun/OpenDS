@@ -1,16 +1,7 @@
 # OpenDS
 Open Data Open Source Competition
 
-asd
-as
-d
-asd
-ad
-asd
-as
-d
-asd
-as
-d
-asd
-asd
+Demo Website : http://opends.azurewebsites.net/index.html
+
+
+#API
