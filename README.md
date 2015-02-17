@@ -7,11 +7,13 @@ Demo Website : http://opends.azurewebsites.net/index.html
 #API
 
 
+
+
 救護車
- ------
- |名稱|說明
- |------|----------
- |目前救護車|呼叫目前所有的救護車
+------
+|名稱|說明
+|------|----------
+|目前救護車|呼叫目前所有的救護車
 |[救護車位置傳送](http://opends.azurewebsites.net/api/dynamic/AmbulancePoint.php?AmbID=「救護車ID」&IP=「裝置的IP和port」&lat=「緯度」&lng=「經度」)|[先取得IP](http://opends.azurewebsites.net/api/dynamic/getClientIp.php?callback=SysGetIP)，[再取得AmbID(救護車ID)需要IP](http://opends.azurewebsites.net/api/dynamic/AmbulanceInit.php?IP=「裝置的IP和port」)，而lat和lng需要提供
 |[救護車資訊](http://opends.azurewebsites.net/api/dynamic/ambulanceInfo.php?AmbID=「救護車ID」)|需要提供AmbID(救護車ID)
 |[救護車取的任務](http://opends.azurewebsites.net/api/dynamic/ambulanceTask.php?AmbID=「救護車ID」)|需要提供AmbID(救護車ID)
