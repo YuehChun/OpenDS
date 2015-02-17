@@ -2,7 +2,7 @@
 Open Data Open Source Competition
 
 Demo Website : http://opends.azurewebsites.net/index.html
-
+Andriod APK  : https://github.com/whcheng740418/AndroidDemo/blob/master/app/app-release.apk?raw=true
 
 #API
 
