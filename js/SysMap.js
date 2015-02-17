@@ -95,9 +95,6 @@
 
 
 
-
-
-
   function hospitalRemove(){
     for (var i = 0; i < hosMarkers.length; i++) {
       hosMarkers[i].setMap(null);
@@ -135,14 +132,14 @@
     $("#person").removeClass("active");
   }
   function disasterRemove(){
-    for (var i = 0; i < disMarkers.length; i++) {
-      disMarkers[i].setMap(null);
+    for (var DID in disMarkers){
+      disMarkers[DID].setMap(null);
     }
     $("#disaster").removeClass("active");
   }
   function suppliesRemove(){
-    for (var i = 0; i < supMarkers.length; i++) {
-      supMarkers[i].setMap(null);
+    for (var SID in supMarkers) {
+      supMarkers[SID].setMap(null);
     }
     $("#supplies").removeClass("active");
   }

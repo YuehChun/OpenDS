@@ -23,24 +23,28 @@ if ($_GET['Type']) {
 	$Injured_Phone = is_null($_POST['Injured_Phone']) ? "" : $_POST['Injured_Phone'];
 	$Contact_Name = is_null($_POST['Contact_Name']) ? "" : $_POST['Contact_Name'];
 	$Contact_Phone = is_null($_POST['Contact_Phone']) ? "" : $_POST['Contact_Phone'];
-	$Injured_Status = is_null($_POST['Injured_Status']) ? "" : $_POST['Injured_Status'];
+	$Injured_Sex = is_null($_POST['Injured_Sex']) ? "" : $_POST['Injured_Sex'];
+	$injured_Area = is_null($_POST['injured_area']) ? "" : $_POST['injured_area'];
+	$injured_Cause = is_null($_POST['injured_Cause']) ? "" : $_POST['injured_Cause'];
+	$Injured_Status = is_null($_POST['injured_Status']) ? "" : $_POST['injured_Status'];
+	$StateLog = is_null($_POST['StateLog']) ? "" : $_POST['StateLog'];
 
+	// print_r($_POST);
 	$InsertTime = date("Y-m-d H:i:s", time());
 	//尋找最近的醫院 GetHospital
 	$HospitalID = 1;
-	$InsertSQL = "insert into InjuredPeople (name,Contact,ContactPhone,AmbulanceID,status) OUTPUT INSERTED.InjuredPeopleID values ('" . $Injured_Name . "','" . $Contact_Name . "','" . $Contact_Phone . "','" . $AmbID . "','1');";
-
-	// exit($InsertSQL);
+	$InsertSQL = "insert into InjuredPeople (Name,sex,phone,contact,ContactPhone,AmbulanceID,status) OUTPUT INSERTED.InjuredPeopleID values ('" . $Injured_Name . "','" . $Injured_Sex . "','" . $Injured_Phone . "','" . $Contact_Name . "','" . $Contact_Phone . "','" . $AmbID . "','1')";
 	$injured = $_conSQL->query($InsertSQL)->fetch(PDO::FETCH_ASSOC);
 	// $injured['InjuredPeopleID'] = 1;
 
-	$LogSQL = "insert into InjuredReturnLog (InjuredPeopleID,RescuersClass,RescuersID,toHospitalID,IP,lng,lat,datetime) OUTPUT INSERTED.logID values ('" . $injured['InjuredPeopleID'] . "','" . $RescuersClass . "','" . $RescuersID . "','" . $HospitalID . "','" . $tIP . "','" . $lng . "','" . $lat . "','" . $InsertTime . "')";
+	$InsertSQL = "insert into InjuredReturnLog (InjuredPeopleID,RescuersClass,RescuersID,toHospitalID,IP,lng,lat,datetime,injuredArea,injuredStatus,injuredCause,InjuryStateLog) values ('" . $injured['InjuredPeopleID'] . "','" . $RescuersClass . "','" . $RescuersID . "','" . $HospitalID . "','" . $tIP . "','" . $lng . "','" . $lat . "','" . $InsertTime . "','" . $injured_Area . "','" . $injured_Status . "','" . $injured_Cause . "','" . $StateLog . "')";
+	$_conSQL->query($InsertSQL);
+	$LogSQL = "select R.InjuredPeopleID as InjID,R.lat,R.lng,R.datetime as time,I.name as IName,I.sex,I.Contact,I.status from InjuredReturnLog as R left join InjuredPeople as I on R.InjuredPeopleID=I.InjuredPeopleID where I.InjuredPeopleID='" . $injured['InjuredPeopleID'] . "'";
 	$Log = $_conSQL->query($LogSQL)->fetch(PDO::FETCH_ASSOC);
 
 	$Log['InjuredID'] = $injured['InjuredPeopleID'];
 	$Hospital = $_conSQL->query("select name from DBhospital where ID='" . $HospitalID . "'")->fetch(PDO::FETCH_ASSOC);
 	$Log['HospitalName'] = $Hospital['name'];
-	$Log['time'] = $InsertTime;
 	echo json_encode($Log, JSON_UNESCAPED_UNICODE);
 } else {
 	echo "error";

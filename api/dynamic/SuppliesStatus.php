@@ -11,19 +11,42 @@ for ($i = 1; $i < count($SupArray); $i++) {
 	}
 	$InSql .= "'" . $SupArray[$i] . "'";
 }
-$SupInfos = $_conSQL->query("select InjuredPeopleID as InjID FROM InjuredPeople WHERE InjuredPeopleID in (" . $InSql . ") and not status='1'")->fetchall(PDO::FETCH_ASSOC);
-$newInjs = $_conSQL->query("select R.InjuredPeopleID as InjID,R.lat,R.lng,R.datetime,I.name as IName,I.sex,I.Contact,I.status from InjuredReturnLog as R left join InjuredPeople as I on R.InjuredPeopleID=I.InjuredPeopleID where R.inAmbulanceTime is null and I.status ='1' and R.InjuredPeopleID not in (" . $InSql . ")")->fetchall(PDO::FETCH_ASSOC);
-foreach ($newInjs as $Key => $Value) {
-	$IPID = $Value['InjID'];
-	$Value['sex'] = is_null($Value['sex']) ? "未知" : ($Value['sex'] == 1) ? "男" : "女";
-	$Value['IName'] = $Value['IName'] == "" ? "未知" : $Value['IName'];
-	$Value['Contact'] = $Value['Contact'] == "" ? "未知" : $Value['Contact'];
-	$Value['datetime'] = substr($Value['datetime'], 0, -4);
-	$injPeople[$IPID] = $Value;
-}
 
-$ReturnInfo['Clear'] = $InjuredInfos;
-$ReturnInfo['New'] = $injPeople;
+// $ClearInfos = $_conSQL->query("select pointID as SupID FROM SuppliesPoint WHERE pointID in (" . $InSql . ") and not status='1'")->fetchall(PDO::FETCH_ASSOC);
+$SQLSup = $_conSQL->query("select pointID as SupID,lat,lng,datetime,status,personNum,supNeed,note from SuppliesPoint where status ='1'")->fetchall(PDO::FETCH_ASSOC);
+$CurSup = "";
+foreach ($SQLSup as $Key => $Value) {
+	$TempKey = $Value['SupID'];
+	switch ($Value['personNum']) {
+		case '1':$CurSup[$TempKey]['theNumber'] = "1 ~ 3";
+			break;
+		case '2':$CurSup[$TempKey]['theNumber'] = "3 ~ 10";
+			break;
+		case '3':$CurSup[$TempKey]['theNumber'] = "10 ~ 20";
+			break;
+		case '4':$CurSup[$TempKey]['theNumber'] = "20 ~ 50";
+			break;
+		case '5':$CurSup[$TempKey]['theNumber'] = "50 ~ 10";
+			break;
+		default:
+			$CurSup[$TempKey]['theNumber'] = "none";
+	}
+	$Items = $Value['supNeed'];
+	$Items = str_replace("0", "礦泉水", $Items);
+	$Items = str_replace("1", "泡麵", $Items);
+	$Items = str_replace("2", "乾糧", $Items);
+	$Items = str_replace("3", "瓦斯罐", $Items);
+	$Items = str_replace("4", "電池", $Items);
+	$CurSup[$TempKey]['Items'] = substr($Items, 0, -1);
+	$CurSup[$TempKey]['lat'] = $Value['lat'];
+	$CurSup[$TempKey]['lng'] = $Value['lng'];
+	$CurSup[$TempKey]['time'] = $Value['datetime'];
+	$CurSup[$TempKey]['status'] = $Value['status'];
+	$CurSup[$TempKey]['note'] = $Value['note'];
+	$CurSup[$TempKey]['SupID'] = $Value['SupID'];
+}
+// $ReturnInfo['Clear'] = $ClearInfos;
+$ReturnInfo['Current'] = $CurSup;
 $ReturnInfo['uptime'] = date("Y-m-d H:i:s", time());
 echo json_encode($ReturnInfo, JSON_UNESCAPED_UNICODE);
 ?>

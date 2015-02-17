@@ -13,6 +13,7 @@
 
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/style.css" rel="stylesheet">
+    <link href="css/jquery.loadmask.css" rel="stylesheet">
 
   <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
   <!--[if lt IE 9]>
@@ -28,6 +29,7 @@
 	<script type="text/javascript" src="js/jquery.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="js/markerclusterer.js"></script>
+  <script type="text/javascript" src="js/jquery.loadmask.min.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
 
     <script type="text/javascript" src="js/SysContent.js"></script>
@@ -35,7 +37,9 @@
 	<script type="text/javascript" src="js/SysMap.js"></script>
     <script type="text/javascript">
         var d = new Date();
+        var userType="main";
         var map;
+        var AutoTime= 10000;
         google.maps.event.addDomListener(window, 'load', initialize);
           function InitMap(map){
             ambulancebMarkers(map);
@@ -47,8 +51,18 @@
             policeMarkers(map);
             shelterMarkers(map);
           }
+        function MainPageTimeout() {
+            setTimeout(function () {
+                if (SyncElems['hospital']) {hospitalStatus(); }
+                if (SyncElems['ambulance']) {ambulancebMarkers(map); }
+                if (SyncElems['person']) {personMarkers(map); }
+                if (SyncElems['injured']) {injuredStatus(); }
+                if (SyncElems['disaster']) {disasterStatus(); }
+                if (SyncElems['supplies']) {suppliesStatus(); }
+                MainPageTimeout();
+            }, AutoTime);
+        }
         MainPageTimeout();
-
     </script>
 </head>
 
@@ -73,11 +87,11 @@
 							        <a href="person.html">我是鄉民</a>
 								</li>
 								<li>
-							        <a href="#">我是醫院</a>
+							        <a href="hospital.html">我是醫院</a>
 								</li>
 								<li class="divider"></li>
 								<li>
-									<a href="index.html">我是醫院</a>
+									<a href="index.html">指揮中心</a>
 								</li>
 							</ul>
 						</li>
@@ -123,7 +137,7 @@
     </div>
     <div class="row clearfix">
 		<div class="col-md-12 column">
-		    <div class="col-md-10 column">
+		    <div class="col-md-10 column" id="MapDIV">
 			    <div class="jumbotron" id="jumbotron" style="height: 650px"></div>
 		    </div>
 		    <div class="col-md-2 column text-right">
@@ -137,9 +151,9 @@
                      <button class="btn btn-default" type="button" id="shelter" onclick="actionStatus('shelter');">
                          <img alt="避難點" src="img/icon/shelter.png" height="20"> 避難點<span id="SheNum"></span>
                      </button>
-                     <button class="btn btn-default" type="button" id="firefighting" onclick="actionStatus('firefighting');">
+                     <!-- <button class="btn btn-default" type="button" id="firefighting" onclick="actionStatus('firefighting');">
                          <img alt="消防局" src="img/icon/firefighting.png" height="20"> 消防局<span id="FirNum"></span>
-                     </button>
+                     </button> -->
                      <button class="btn btn-default" type="button" id="ambulance" onclick="actionStatus('ambulance');">
                          <img alt="救護車" src="img/icon/Ambulance.png" height="20"> 救護車<span id="AmbNum"></span>
                      </button>

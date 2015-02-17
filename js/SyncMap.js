@@ -12,14 +12,35 @@
 
   function InjuredCancel(thisInj){
     var thisInjID = thisInj;
-    $.get("http://opends.azurewebsites.net/api/dynamic/InjuredCancel.php?injID=" + thisInjID,function( result ){
+    $.get("http://opends.azurewebsites.net/api/dynamic/injuredCancel.php?injID=" + thisInjID,function( result ){
       if(result == "OK"){
         injMarkers[thisInjID].setMap(null);
         injMarkers[thisInjID]=null;
         injContent[thisInjID]=null;
       }
     });
-    // alert(thisInjID);
+  }
+
+  function SuppliesCancel(thisSup){
+    var thisSupID = thisSup;
+    $.get("http://opends.azurewebsites.net/api/dynamic/suppliesCancel.php?SupID=" + thisSupID,function( result ){
+      if(result == "OK"){
+        supMarkers[thisSupID].setMap(null);
+        supMarkers[thisSupID]=null;
+        supContent[thisSupID]=null;
+      }
+    });
+  }
+
+  function DisasterCancel(thisDis){
+    var thisDisID = thisDis;
+    $.get("http://opends.azurewebsites.net/api/dynamic/disasterCancel.php?DisID=" + thisDisID,function( result ){
+      if(result == "OK"){
+        disMarkers[thisDisID].setMap(null);
+        disMarkers[thisDisID]=null;
+        disContent[thisDisID]=null;
+      }
+    });
   }
 
 
@@ -121,7 +142,7 @@
               marker.setMap(map);
             }
             injMarkers[val.InjID] = marker;
-            injContent[val.InjID] = injInfo(val);
+            injContent[val.InjID] = "-";
         });
       injuredStatus();
       $("#InjNum").html("#"+Object.keys(injMarkers).length);
@@ -147,6 +168,7 @@
             }
         });
       $("#PerNum").html("#"+Object.keys(perMarkers).length);
+      $("#UpTime_person").html(new Date().Format("yyyy-MM-dd HH:mm:ss"));
     });
   }
   function disasterMarkers(map) {
@@ -161,6 +183,7 @@
             disMarkers[val.DisID] = marker;
             disContent[val.DisID] = disInfo(val);
         });
+        disasterStatus();
       $("#DisNum").html("#"+Object.keys(disMarkers).length);
     });
   }
@@ -176,6 +199,7 @@
             supMarkers[val.SupID] = marker;
             supContent[val.SupID] = supInfo(val);
         });
+        suppliesStatus();
         $("#SupNum").html("#"+Object.keys(supMarkers).length);
     });
   }
@@ -214,49 +238,54 @@
         }
         $.get("http://opends.azurewebsites.net/api/dynamic/InjuredStatus.php?InjGroupID=" + Group, function (InjInfo) {
             var InjObj = JSON.parse(InjInfo);
-            for(var key in InjObj.Clear){
-                var IID = InjObj.Clear[key].InjID;
-                injMarkers[IID].setMap(null);
-                injMarkers[IID] = null;
-                injContent[IID] = null;
-            }
             for(var key in InjObj.New){
                 var ThisObj = InjObj.New[key];
-                injMarkers[ThisObj.InjID]= new google.maps.Marker({
-                  'position': new google.maps.LatLng(ThisObj.lat, ThisObj.lng),
-                  'icon': injuredImg,
-                  'title': ThisObj.IName + "," + ThisObj.ID
-                });
+                if(typeof(ThisObj.InjID) == 'undefined' || injMarkers[ThisObj] == null){
+                  injMarkers[ThisObj.InjID]= new google.maps.Marker({
+                    'position': new google.maps.LatLng(ThisObj.lat, ThisObj.lng),
+                    'icon': injuredImg,
+                    'title': ThisObj.InjID + "," + ThisObj.IName
+                  });
+                  if(MapElems['injured']){
+                    injMarkers[ThisObj.InjID].setMap(map);
+                  }
+
+                }
                 injContent[ThisObj.InjID] = injInfo(ThisObj);
             }
+            $("#UpTime_injured").html(new Date().Format("yyyy-MM-dd HH:mm:ss"));
         });
-      $("#UpTime_injured").html(new Date().Format("yyyy-MM-dd HH:mm:ss"));
     }
 
-    function disaterStatus(){
+    function disasterStatus(){
         var Group="";
-        for (var IID in injContent){
-            Group = Group+","+IID;
+        for (var DID in disContent){
+            Group = Group+","+DID;
         }
-        $.get("http://opends.azurewebsites.net/api/dynamic/InjuredStatus.php?InjGroupID=" + Group, function (InjInfo) {
-            var InjObj = JSON.parse(InjInfo);
-            for(var key in InjObj.Clear){
-                var IID = InjObj.Clear[key].InjID;
-                injMarkers[IID].setMap(null);
-                injMarkers[IID] = null;
-                injContent[IID] = null;
-            }
-            for(var key in InjObj.New){
-                var ThisObj = InjObj.New[key];
-                injMarkers[ThisObj.InjID]= new google.maps.Marker({
-                  'position': new google.maps.LatLng(ThisObj.lat, ThisObj.lng),
-                  'icon': injuredImg,
-                  'title': ThisObj.IName + "," + ThisObj.ID
-                });
-                injContent[ThisObj.InjID] = injInfo(ThisObj);
+        $.get("http://opends.azurewebsites.net/api/dynamic/disasterStatus.php?DisGroupID=" + Group, function (DisInfo) {
+            var DisObj = JSON.parse(DisInfo);
+            // for(var key in DisObj.Clear){
+            //     var DID = DisObj.Clear[key].DisID;
+            //     disMarkers[DID].setMap(null);
+            //     disMarkers[DID] = null;
+            //     disContent[DID] = null;
+            // }
+            for(var key in DisObj.Current){
+                var ThisObj = DisObj.Current[key];
+                if(typeof(disMarkers[ThisObj.DisID]) == 'undefined' || disMarkers[ThisObj.DisID] == null){
+                  disMarkers[ThisObj.DisID] = new google.maps.Marker({
+                    'position': new google.maps.LatLng(ThisObj.lat, ThisObj.lng),
+                    'icon': disasterImg,
+                    'title': ThisObj.DisID
+                  });
+                  if(MapElems['disaster']){
+                    disMarkers[ThisObj.DisID].setMap(map);
+                  }
+                }
+                disContent[ThisObj.DisID] = disInfo(ThisObj);
             }
         });
-      $("#UpTime_injured").html(new Date().Format("yyyy-MM-dd HH:mm:ss"));
+      $("#UpTime_disaster").html(new Date().Format("yyyy-MM-dd HH:mm:ss"));
     }
 
     function suppliesStatus(){
@@ -266,30 +295,29 @@
         }
         $.get("http://opends.azurewebsites.net/api/dynamic/SuppliesStatus.php?SupGroupID=" + Group, function (SupData) {
             var SupObj = JSON.parse(SupData);
-            for(var key in SupObj.Clear){
-                var SID = SupObj.Clear[key].SupID;
-                supMarkers[SID].setMap(null);
-                supMarkers[SID] = null;
-                supContent[SID] = null;
-            }
-            for(var key in SupObj.New){
-                var ThisObj = SupObj.New[key];
-                injMarkers[ThisObj.SupID]= new google.maps.Marker({
-                  'position': new google.maps.LatLng(ThisObj.lat, ThisObj.lng),
-                  'icon': suppliesImg,
-                  'title': ThisObj.SupID
-                });
-                supContent[ThisObj.SupID] = injInfo(ThisObj);
+            // for(var key in SupObj.Clear){
+            //     var SID = SupObj.Clear[key].SupID;
+            //     supMarkers[SID].setMap(null);
+            //     supMarkers[SID] = null;
+            //     supContent[SID] = null;
+            // }
+            for(var key in SupObj.Current){
+                var ThisObj = SupObj.Current[key];
+                if(typeof(supMarkers[ThisObj.SupID]) == 'undefined' || supMarkers[ThisObj.SupID] == null){
+                  supMarkers[ThisObj.SupID] = new google.maps.Marker({
+                    'position': new google.maps.LatLng(ThisObj.lat, ThisObj.lng),
+                    'icon': suppliesImg,
+                    'title': ThisObj.SupID
+                  });
+                  if(MapElems['disaster']){
+                    supMarkers[ThisObj.SupID].setMap(map);
+                  }
+                }
+                supContent[ThisObj.SupID] = supInfo(ThisObj);
             }
         });
-      $("#UpTime_injured").html(new Date().Format("yyyy-MM-dd HH:mm:ss"));
+      $("#UpTime_supplies").html(new Date().Format("yyyy-MM-dd HH:mm:ss"));
     }
-
-
-
-
-
-
 
     function SyncData(_Type){
         if(SyncElems[_Type]){
@@ -303,24 +331,6 @@
         }
     }
 
-    function MainPageTimeout() {
-        setTimeout(function () {
-            if (SyncElems['hospital']) {
-                hospitalStatus();
-            } else if (SyncElems['ambulance']) {
-                ambulancebMarkers(map);
-            } else if (SyncElems['person']) {
-                personMarkers(map);
-            } else if (SyncElems['injured']) {
-                injuredStatus();
-            } else if (SyncElems['disaster']) {
-                disasterStatus();
-            } else if (SyncElems['supplies']) {
-                suppliesStatus();
-            }
-            MainPageTimeout();
-        }, 10000);
-    }
 
 
 

@@ -13,6 +13,7 @@
 
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/style.css" rel="stylesheet">
+  <link href="css/jquery.loadmask.css" rel="stylesheet">
 
   <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
   <!--[if lt IE 9]>
@@ -28,7 +29,9 @@
   <script type="text/javascript" src="js/jquery.min.js"></script>
   <script type="text/javascript" src="js/bootstrap.min.js"></script>
   <script type="text/javascript" src="js/markerclusterer.js"></script>
+  <script type="text/javascript" src="js/jquery.loadmask.min.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
+  <script type="text/javascript" src="js/SysContent.js"></script>
   <script type="text/javascript" src="js/SyncMap.js"></script>
   <script type="text/javascript" src="js/SysMap.js"></script>
   <script type="text/javascript" src="js/SysPerson.js"></script>
@@ -36,7 +39,7 @@
     var map;
     var PerID,IP,lat = 25.045969,lng = 121.513196,TaskObj;
     var d = new Date();
-    var PostTimer = 10000;
+    var AutoTime= 10000;
     google.maps.event.addDomListener(window, 'load', initialize);
     function InitMap(map){
       hospitalMarkers(map);
@@ -46,7 +49,12 @@
       policeMarkers(map);
       shelterMarkers(map);
     }
-    PeopleTimeout();
+
+    setInterval(function() {
+      getLocation();
+      sendPersonPoint();
+    }, AutoTime);
+    
   </script>
   <script src="http://opends.azurewebsites.net/api/dynamic/getClientIp.php?callback=SysGetIP"></script>
   </head>
@@ -70,7 +78,7 @@
                       <a href="person.html">我是鄉民</a>
                 </li>
                 <li>
-                      <a href="#">我是醫院</a>
+                      <a href="hospital.html">我是醫院</a>
                 </li>
                 <li class="divider"></li>
                 <li>
@@ -83,49 +91,85 @@
       </nav>
         </div>
     </div>
+    <div class="row clearfix">
+        <div class="col-md-12 column" id="alertStatus">
+        </div>
+    </div>
   <div class="row clearfix">
     <div class="col-md-12 column">
-        <div class="col-md-6 column">
-          <div class="jumbotron" id="jumbotron" style="height: 500px"></div>
-        </div>
-        <div class="col-md-2 column">
-          <div class="btn-group btn-group-vertical btn-group-lg" id="buttonGroup">
-               <button class="btn btn-default" type="button" id="hospital" onclick="actionStatus('hospital');">
-                   <img alt="醫院" src="img/icon/hospital.png" height="20"> 醫院
-               </button>
-               <button class="btn btn-default" type="button" id="injured" onclick="actionStatus('injured');">
-                   <img alt="傷患點" src="img/icon/injured.png" height="20"> 傷患點
-               </button>
-               <button class="btn btn-default" type="button" id="disaster" onclick="actionStatus('disaster');">
-                   <img alt="物資點" src="img/icon/disaster.png" height="20"> 災害點
-               </button>
-               <button class="btn btn-default" type="button" id="supplies" onclick="actionStatus('supplies');">
-                   <img alt="物資點" src="img/icon/supplies.png" height="20"> 物資點
-               </button>
-               <button class="btn btn-default" type="button" id="person" onclick="actionStatus('person');">
-                   <img alt="鄉民" src="img/icon/person.png" height="20"> 鄉民
-               </button>
+      <div class="col-md-8 column">
+        <div class="row clearfix">
+          <div class="col-md-9 column">
+            <div class="jumbotron" id="jumbotron" style="height: 500px"></div>
           </div>
-          <div>
-                <h3 class="text-success">最後更新時間</h3>
-                <span class="label label-success">受傷點</span>
-                <p id="UpTime_hospital"> - - - - </p>
-                <span class="label label-success">災害點</span>
-                <p id="UpTime_disaster"> - - - - </p>
-                <span class="label label-success">物資點</span>
-                <p id="UpTime_person"> - - - - </p>
-                <span class="label label-primary">位置更新</span>
-                <p id="UpTime_location"> - - - - </p>
+          <div class="col-md-3 column">
+            <div class="btn-group btn-group-vertical btn-group-lg" id="buttonGroup">
+                     <button class="btn btn-default" type="button" id="hospital" onclick="actionStatus('hospital');">
+                         <img alt="醫院" src="img/icon/hospital.png" height="20"> 醫院<span id="HosNum"></span>
+                     </button>
+                     <button class="btn btn-default" type="button" id="police" onclick="actionStatus('police');">
+                         <img alt="警察局" src="img/icon/Police.png" height="20"> 警察局<span id="PolNum"></span>
+                     </button>
+                     <button class="btn btn-default" type="button" id="shelter" onclick="actionStatus('shelter');">
+                         <img alt="避難點" src="img/icon/shelter.png" height="20"> 避難點<span id="SheNum"></span>
+                     </button>
+                     <button class="btn btn-default" type="button" id="firefighting" onclick="actionStatus('firefighting');">
+                         <img alt="消防局" src="img/icon/firefighting.png" height="20"> 消防局<span id="FirNum"></span>
+                     </button>  
+                     <button class="btn btn-default" type="button" id="disaster" onclick="actionStatus('disaster');">
+                         <img alt="災害點" src="img/icon/disaster.png" height="20"> 災害點<span id="DisNum"></span>
+                     </button>
+                     <button class="btn btn-default" type="button" id="injured" onclick="actionStatus('injured');">
+                         <img alt="傷患點" src="img/icon/injured.png" height="20"> 傷患點<span id="InjNum"></span>
+                     </button>
+                     <button class="btn btn-default" type="button" id="supplies" onclick="actionStatus('supplies');">
+                         <img alt="物資點" src="img/icon/supplies.png" height="20"> 物資點<span id="SupNum"></span>
+                     </button>
+            </div>
+            <div>
+                  <h3 class="text-success">最後更新時間</h3>
+                  <span class="label label-success">受傷點</span>
+                  <p id="UpTime_hospital"> - - - - </p>
+                  <span class="label label-success">災害點</span>
+                  <p id="UpTime_disaster"> - - - - </p>
+                  <span class="label label-success">物資點</span>
+                  <p id="UpTime_supplies"> - - - - </p>
+                  <span class="label label-primary">位置更新</span>
+                  <p id="UpTime_location"> - - - - </p>
+            </div>
           </div>
         </div>
+        <div class="row clearfix">
+          <div class="col-md-12 column text-center">
+            <div class="btn-group ">
+                <button type="button" class="btn btn-info  btn-lg" onclick="SyncData('person')" id="syncperson">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyperson"></span>
+                    鄉民即時更新
+                </button>
+                <button type="button" class="btn btn-info  btn-lg" onclick="SyncData('injured')" id="syncinjured">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glyinjured"></span>
+                    傷患點即時更新
+                </button>
+                <button type="button" class="btn btn-info  btn-lg" onclick="SyncData('disaster')" id="syncdisaster">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glydisaster"></span>
+                    災害點即時更新
+                </button>
+                <button type="button" class="btn btn-info  btn-lg" onclick="SyncData('supplies')" id="syncsupplies">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true" id="glysupplies"></span>
+                    物資點即時更新
+                </button>
+            </div>
+          </div>
+        </div>
+      </div>
         <div class="col-md-4 column">
           <div class="panel-group" id="PersonPage" role="tablist" aria-multiselectable="true">
-            <div class="panel panel-default">
+            <div class="panel panel-default" id="MainInjured">
               <div role="tab" class="panel-heading" id="HeadInjured">
                  <a class="panel-title" data-toggle="collapse" data-parent="#PersonPage" href="#PanelInjured" aria-expanded="true" aria-controls="PanelInjured">傷患求救點</a>
               </div>
               <div id="PanelInjured" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="HeadInjured">
-                <div class="panel-body">
+                <div class="panel-body" style="padding:11px;">
                   <div id="InjuredInfo"></div>
                   <form role="form">
                     <fieldset disabled>
@@ -150,8 +194,90 @@
                               <input type="radio" name="Injured_Sex" value="0" >女
                           </label>
                           <label class="btn btn-default">
-                              <input type="radio" name="Injured_Sex" value="1" checked>男
+                              <input type="radio" name="Injured_Sex" value="1" >男
                           </label>
+                        </div>
+                    </div>
+                    <div class="form-group form-inline">
+                        <label for="Injuerd_Area">受傷位置</label>
+                        <div class="input-group">
+                          <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredArea" value="0">頭
+                            </label>
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredArea" value="1">手
+                            </label>
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredArea" value="2">腳
+                            </label>
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredArea" value="3">胸
+                            </label>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-inline">
+                        <label for="Injuerd_Cause">事故原因</label>
+                        <div class="input-group">
+                          <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredCause" value="0">車禍
+                            </label>
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredCause" value="1">氣爆
+                            </label>
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredCause" value="2">溺水
+                            </label>
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredCause" value="3">跌倒
+                            </label>
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredCause" value="4">不明
+                            </label>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                       <label for="Injuerd_Status">受傷狀況</label>
+                        <div class="input-group">
+                          <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredStatus" value="0">骨折
+                            </label>
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredStatus" value="1">出血嚴重
+                            </label>
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredStatus" value="2">燒燙傷
+                            </label>
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredStatus" value="3">凍傷
+                            </label>
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredStatus" value="4">化學傷
+                            </label>
+                          </div>
+                        </div>
+                        <div class="input-group">
+                          <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredStatus" value="5">切割傷
+                            </label>
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredStatus" value="6">撕裂傷
+                            </label>
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredStatus" value="7">穿刺傷
+                            </label>
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredStatus" value="8">斷裂傷
+                            </label>
+                            <label class="btn btn-default">
+                                <input type="checkbox" name="injuredStatus" value="9">挫傷
+                            </label>
+                          </div>
                         </div>
                     </div>
                     <div class="form-group">
@@ -175,7 +301,7 @@
               </div>
             </div>
 
-            <div class="panel panel-default">
+            <div class="panel panel-default" id="MainSupplies">
               <div role="tab" class="panel-heading" id="HeadSupplies">
                  <a class="panel-title" data-toggle="collapse" data-parent="#PersonPage" href="#PanelSupplies" aria-expanded="false" aria-controls="PanelSupplies">物資需求點</a>
               </div>
@@ -191,30 +317,46 @@
                     </fieldset>
                     <div class="form-group">
                       <label for="Ambulance_Name">需求數量（人）</label>
-                      <select class="form-control">
-                        <option>1-3</option>
-                        <option>3-10</option>
-                        <option>10-20</option>
-                        <option>20-50</option>
-                        <option>50-100</option>
+                      <select class="form-control" name="supNumber" id="supNumber">
+                        <option value="1">1-3</option>
+                        <option value="2">3-10</option>
+                        <option value="3">10-20</option>
+                        <option value="4">20-50</option>
+                        <option value="5">50-100</option>
                       </select>
                     </div>
                     <div class="form-group">
-                      <label for="Ambulance_Name">需求清單</label>
-                      <div class="checkbox">
-                         <label><input type="checkbox" style="style2"/>水</label>
-                      </div>
-                      <div class="checkbox">
-                         <label><input type="checkbox" style="style2"/>餅乾</label>
+                      <div class="input-group">
+                        <label for="Ambulance_Name">需求物資</label>
+                        <div class="btn-group" data-toggle="buttons">
+                          <label class="btn btn-default">
+                              <input type="checkbox" name="SuppliesItem" value="0">礦泉水
+                          </label>
+                          <label class="btn btn-default">
+                              <input type="checkbox" name="SuppliesItem" value="1">泡麵
+                          </label>
+                          <label class="btn btn-default">
+                              <input type="checkbox" name="SuppliesItem" value="2">乾糧
+                          </label>
+                          <label class="btn btn-default">
+                              <input type="checkbox" name="SuppliesItem" value="3">瓦斯罐
+                          </label>
+                          <label class="btn btn-default">
+                              <input type="checkbox" name="SuppliesItem" value="4">電池
+                          </label>
+                        </div>
                       </div>
                     </div>
-                    <button type="button" class="btn btn-primary btn-lg btn-block" onclick="sendSupplies();">提交</button>
+                    <div class="form-group">
+                       <label for="Supplies_Status">註解</label>
+                       <textarea class="form-control" rows="3" name="Supplies_note" id="Supplies_note"></textarea>
+                    </div>
                   </form>
+                  <button type="button" class="btn btn-primary btn-lg btn-block" onclick="sendSupplies();">提交</button>
                 </div>
               </div>
             </div>
-
-            <div class="panel panel-default">
+            <div class="panel panel-default" id="MainDisaster">
               <div role="tab" class="panel-heading" id="HeadDisaster">
                  <a class="panel-title collapsed" data-toggle="collapse" data-parent="#PersonPage" href="#PanelDisaster" aria-expanded="false" aria-controls="PanelDisaster">交通災害點</a>
               </div>
@@ -229,33 +371,59 @@
                       </div>
                     </fieldset>
                     <div class="form-group">
-                       <label for="Ambulance_Name">災害狀況</label>
-                      <div class="checkbox">
-                         <label><input type="checkbox" style="style2"/>樹倒塌</label>
-                      </div>
-                      <div class="checkbox">
-                         <label><input type="checkbox" style="style2"/>道路阻塞</label>
-                      </div>
-                      <div class="checkbox">
-                         <label><input type="checkbox" style="style2"/>地層下陷</label>
-                      </div>
-
-                      <div class="checkbox">
-                         <label><input type="checkbox" style="style2"/>房屋倒塌</label>
+                      <div class="input-group">
+                        <label for="DisasterStatus">災害狀況</label>
+                        <div class="btn-group" data-toggle="buttons">
+                          <label class="btn btn-default">
+                              <input type="checkbox" name="RoadStatus" value="0">樹倒塌
+                          </label>
+                          <label class="btn btn-default">
+                              <input type="checkbox" name="RoadStatus" value="1">道路阻塞
+                          </label>
+                          <label class="btn btn-default">
+                              <input type="checkbox" name="RoadStatus" value="2">地層下陷
+                          </label>
+                          <label class="btn btn-default">
+                              <input type="checkbox" name="RoadStatus" value="3">房屋倒塌
+                          </label>
+                        </div>
                       </div>
                     </div>
                     <div class="form-group">
-                       <label for="CarPass">車量是否可以通過</label>
-                        <div class="radio-inline">
-                          <label><input name="CarPass" value="1" type="radio" checked/>是</label>
+                      <div class="input-group">
+                        <label for="DisasterScope">災害範圍（公尺）</label>
+                        <div class="btn-group" data-toggle="buttons">
+                          <label class="btn btn-default">
+                              <input type="radio" name="Scope" value="0" checked>1-3
+                          </label>
+                          <label class="btn btn-default">
+                              <input type="radio" name="Scope" value="1">3-10
+                          </label>
+                          <label class="btn btn-default">
+                              <input type="radio" name="Scope" value="2">10-20
+                          </label>
+                          <label class="btn btn-default">
+                              <input type="radio" name="Scope" value="3">20-50
+                          </label>
+                          <label class="btn btn-default">
+                              <input type="radio" name="Scope" value="4">50-100
+                          </label>
                         </div>
-                        <div class="radio-inline">
-                          <label><input name="CarPass" value="0" type="radio" />否</label>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="CarPass" class="control-label input-group">車量是否可以通過</label>
+                        <div class="btn-group" data-toggle="buttons">
+                          <label class="btn btn-default">
+                              <input type="radio" name="CarPass" value="0" >否
+                          </label>
+                          <label class="btn btn-default">
+                              <input type="radio" name="CarPass" value="1" >是
+                          </label>
                         </div>
                     </div> 
-
                     <div class="form-group">
-                       <label for="Ambulance_Name">補充說明</label>
+                       <label for="DisasterNote">補充說明</label>
                         <textarea placeholder="這隨時會倒塌請不要過來！" class="form-control" rows="3" name="Disaster_Status" id="Disaster_Status"></textarea>
                     </div>
                     <button type="button" class="btn btn-primary btn-lg btn-block" onclick="sendDisaster();">提交</button>
@@ -263,8 +431,6 @@
                 </div>
               </div>
             </div>
-
-
           </div>
         </div>
       </div>
