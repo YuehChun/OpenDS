@@ -5,7 +5,7 @@ Demo Website : http://opends2.azurewebsites.net/index.html
 
 Andriod APK  : https://github.com/whcheng740418/AndroidDemo/blob/master/app/app-release.apk?raw=true
 
-
+License : http://www.apache.org/licenses/LICENSE-2.0
 #API
 
 
