@@ -8,9 +8,9 @@ Andriod APK  : https://github.com/whcheng740418/AndroidDemo/blob/master/app/app-
 License : http://www.apache.org/licenses/LICENSE-2.0
 #API
 
-![image](https://github.com/YuehChun/OpenDS/amb.png)
-![image](https://github.com/YuehChun/OpenDS/hospital.png)
-![image](https://github.com/YuehChun/OpenDS/main.png)
+![image](https://github.com/YuehChun/OpenDS/blob/master/main.png)
+![image](https://github.com/YuehChun/OpenDS/blob/master/hospital.png)
+![image](https://github.com/YuehChun/OpenDS/blob/master/amb.png)
 
 
 
