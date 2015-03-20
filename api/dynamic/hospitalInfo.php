@@ -8,8 +8,8 @@ if (preg_match('/^\d+$/', $_GET['HID'])) {
 	$QuerySQL = "select DB.name as name,DB.ID as HID,EM.availableHospitalBed as AHB,EM.totalHospitalBed as THB,EM.availableSurgeryRoom as ASR,EM.totalSurgeryRoom as TSR,EM.datetime as time from DBhospital as DB left join Emergency as EM on DB.ID=EM.IDhospital where DB.ID ='" . intval($_GET['HID']) . "'";
 	$getDataArr = $_conSQL->query($QuerySQL)->fetch(PDO::FETCH_ASSOC);
 	if (is_null($getDataArr['AHB'])) {
-		$getDataArr['AHB'] = 1;
-		$getDataArr['ASR'] = 1;
+		$getDataArr['AHB'] = 0;
+		$getDataArr['ASR'] = 0;
 		$getDataArr['THB'] = 1;
 		$getDataArr['TSR'] = 1;
 		$getDataArr['time'] = 0;

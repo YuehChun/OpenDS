@@ -1,13 +1,13 @@
     var userType="per";
-    var perInfoMsg='<div class="alert alert-dismissable alert-info">'+
-      '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+    var perInfoMsg='<div class="alert alert-dismissable alert-info">' +
+      '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
       '<h4>Post!</h4>' +
-      '<strong>Thank your help!</strong><div> Please wait 10 second'+ 
+      '<strong>Thank your help!</strong><div> Please wait 10 second' + 
     '</div></div>';
 
     function SysGetIP(IPjson) {
         IP=IPjson.IP;
-        $.get("http://opends.azurewebsites.net/api/dynamic/PersonInit.php?IP="+IP,function( result ){
+        $.get("http://opends2.azurewebsites.net/api/dynamic/PersonInit.php?IP="+IP,function( result ){
           var newID = JSON.parse(result);
           PerID=newID.ID;
           $("#LogID").html("NCHU-DMLab :: 鄉民 :: "+ PerID);
@@ -68,7 +68,7 @@
 
 
       var Para = "Type=Per&PerID="+PerID+"&IP="+IP+"&lat="+lat+"&lng="+lng;
-      $.post("http://opends.azurewebsites.net/api/dynamic/InjuredInit.php?" + Para ,{
+      $.post("http://opends2.azurewebsites.net/api/dynamic/InjuredInit.php?" + Para ,{
         "Injured_Name": Injured_Name ,
         "Injured_Phone": Injured_Phone,
         "Contact_Name":Contact_Name ,
@@ -129,7 +129,7 @@
       var DisStatus = $("#Disaster_Status").val();
 
       var Para = "PerID="+PerID+"&IP="+IP+"&lat="+lat+"&lng="+lng;
-      $.post("http://opends.azurewebsites.net/api/dynamic/DisasterInit.php?" + Para ,{"RoadStatus" : RoadStatus , "Scope" : Scope , "CarPass" : CarPass , "DisStatus" : DisStatus },function(result){
+      $.post("http://opends2.azurewebsites.net/api/dynamic/DisasterInit.php?" + Para ,{"RoadStatus" : RoadStatus , "Scope" : Scope , "CarPass" : CarPass , "DisStatus" : DisStatus },function(result){
           var DisasterObj = JSON.parse(result);
           var perSuccessMsg='<div class="alert alert-dismissable alert-success">'+
             '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
@@ -154,7 +154,7 @@
       var note = $("#Supplies_note").val();
 
       var Para = "PerID="+PerID+"&IP="+IP+"&lat="+lat+"&lng="+lng;
-      $.post("http://opends.azurewebsites.net/api/dynamic/SuppliesInit.php?" + Para ,{"Items" : Items ,"PersonNumber" : PersonNumber ,"note" : note },function(result){
+      $.post("http://opends2.azurewebsites.net/api/dynamic/SuppliesInit.php?" + Para ,{"Items" : Items ,"PersonNumber" : PersonNumber ,"note" : note },function(result){
           var SuppliesObj = JSON.parse(result);
           var perSuccessMsg='<div class="alert alert-dismissable alert-success">'+
             '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
@@ -170,7 +170,7 @@
 
     function sendPersonPoint(){
       var Para = "PerID="+PerID+"&IP="+IP+"&lat="+lat+"&lng="+lng;
-      $.get("http://opends.azurewebsites.net/api/dynamic/PersonPoint.php?"+Para , function( result ){
+      $.get("http://opends2.azurewebsites.net/api/dynamic/PersonPoint.php?"+Para , function( result ){
         var LocationObj = JSON.parse(result);
         $("#UpTime_location").text(LocationObj.time);
       });

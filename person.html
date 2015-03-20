@@ -50,13 +50,19 @@
       shelterMarkers(map);
     }
 
-    setInterval(function() {
+    setInterval(function(map) {
+      if (SyncElems['hospital']) {hospitalStatus(); }
+      if (SyncElems['ambulance']) {ambulancebMarkers(map); }
+      if (SyncElems['person']) {personMarkers(map); }
+      if (SyncElems['injured']) {injuredStatus(); }
+      if (SyncElems['disaster']) {disasterStatus(); }
+      if (SyncElems['supplies']) {suppliesStatus(); }
       getLocation();
       sendPersonPoint();
     }, AutoTime);
     
   </script>
-  <script src="http://opends.azurewebsites.net/api/dynamic/getClientIp.php?callback=SysGetIP"></script>
+  <script src="http://opends2.azurewebsites.net/api/dynamic/getClientIp.php?callback=SysGetIP"></script>
   </head>
   <body>
 <div class="container">
@@ -169,7 +175,7 @@
                  <a class="panel-title" data-toggle="collapse" data-parent="#PersonPage" href="#PanelInjured" aria-expanded="true" aria-controls="PanelInjured">傷患求救點</a>
               </div>
               <div id="PanelInjured" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="HeadInjured">
-                <div class="panel-body" style="padding:11px;">
+                <div class="panel-body" style="padding:9px;">
                   <div id="InjuredInfo"></div>
                   <form role="form">
                     <fieldset disabled>
@@ -306,7 +312,7 @@
                  <a class="panel-title" data-toggle="collapse" data-parent="#PersonPage" href="#PanelSupplies" aria-expanded="false" aria-controls="PanelSupplies">物資需求點</a>
               </div>
               <div id="PanelSupplies" class="panel-collapse collapse" role="tabpanel" aria-labelledby="HeadSupplies">
-                <div class="panel-body">
+                <div class="panel-body" style="padding:9px;">
                   <div id="SuppliesInfo"></div>
                   <form role="form">
                     <fieldset disabled>
@@ -361,7 +367,7 @@
                  <a class="panel-title collapsed" data-toggle="collapse" data-parent="#PersonPage" href="#PanelDisaster" aria-expanded="false" aria-controls="PanelDisaster">交通災害點</a>
               </div>
               <div id="PanelDisaster" class="panel-collapse collapse" role="tabpanel" aria-labelledby="HeadDisaster">
-                <div class="panel-body">
+                <div class="panel-body" style="padding:9px;">
                   <div id="DisasterInfo"></div>
                   <form role="form">
                     <fieldset disabled>

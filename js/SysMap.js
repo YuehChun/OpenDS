@@ -1,5 +1,6 @@
   var hosMarkers = [], polMarkers = [], sheMarkers = [],ambMarkers = {},perMarkers = {},injMarkers = {},disMarkers = {},supMarkers = {}
   var hosContent = {}, polContent = {}, sheContent = {},ambContent = {},perContent = {},injContent = {},disContent = {},supContent = {};
+  var InjListener ={};
   var directionsDisplay;
   var directionsService = new google.maps.DirectionsService();
   var SyncElems = {
@@ -25,64 +26,64 @@
 
 
   var hospitalImg = {
-    url: 'http://opends.azurewebsites.net/img/icon/hospital.png',
+    url: 'http://opends2.azurewebsites.net/img/icon/hospital.png',
     size: new google.maps.Size(32, 32),
     origin: new google.maps.Point(0,0),
-    anchor: new google.maps.Point(0, 32)
+    anchor: new google.maps.Point(16, 32)
   };
   var policeImg = {
-    url: 'http://opends.azurewebsites.net/img/icon/Police.png',
+    url: 'http://opends2.azurewebsites.net/img/icon/Police.png',
     size: new google.maps.Size(32, 32),
     origin: new google.maps.Point(0,0),
-    anchor: new google.maps.Point(0, 32)
+    anchor: new google.maps.Point(16, 32)
   };
   var shelterImg = {
-    url: 'http://opends.azurewebsites.net/img/icon/shelter.png',
+    url: 'http://opends2.azurewebsites.net/img/icon/shelter.png',
     size: new google.maps.Size(32, 32),
     origin: new google.maps.Point(0,0),
-    anchor: new google.maps.Point(0, 32)
+    anchor: new google.maps.Point(16, 32)
   };
   var ambulanceImg = {
-    url: 'http://opends.azurewebsites.net/img/icon/Ambulance.png',
+    url: 'http://opends2.azurewebsites.net/img/icon/Ambulance.png',
     size: new google.maps.Size(32, 32),
     origin: new google.maps.Point(0,0),
-    anchor: new google.maps.Point(0, 32)
+    anchor: new google.maps.Point(16, 32)
   };
   var personImg = {
-    url: 'http://opends.azurewebsites.net/img/icon/person.png',
+    url: 'http://opends2.azurewebsites.net/img/icon/person.png',
     size: new google.maps.Size(32, 32),
     origin: new google.maps.Point(0,0),
-    anchor: new google.maps.Point(0, 32)
+    anchor: new google.maps.Point(16, 32)
   };
   var injuredImg = {
-    url: 'http://opends.azurewebsites.net/img/icon/injured.png',
+    url: 'http://opends2.azurewebsites.net/img/icon/injured.png',
     size: new google.maps.Size(32, 32),
     origin: new google.maps.Point(0,0),
-    anchor: new google.maps.Point(0, 32)
+    anchor: new google.maps.Point(16, 32)
   };
   var disasterImg = {
-    url: 'http://opends.azurewebsites.net/img/icon/disaster.png',
+    url: 'http://opends2.azurewebsites.net/img/icon/disaster.png',
     size: new google.maps.Size(32, 32),
     origin: new google.maps.Point(0,0),
-    anchor: new google.maps.Point(0, 32)
+    anchor: new google.maps.Point(16, 32)
   };
   var suppliesImg = {
-    url: 'http://opends.azurewebsites.net/img/icon/supplies.png',
+    url: 'http://opends2.azurewebsites.net/img/icon/supplies.png',
     size: new google.maps.Size(32, 32),
     origin: new google.maps.Point(0,0),
-    anchor: new google.maps.Point(0, 32)
+    anchor: new google.maps.Point(16, 32)
   };
   var myambulanceImg = {
-    url: 'http://opends.azurewebsites.net/img/icon/myambulance.png',
+    url: 'http://opends2.azurewebsites.net/img/icon/myambulance.png',
     size: new google.maps.Size(32, 32),
     origin: new google.maps.Point(0,0),
-    anchor: new google.maps.Point(0, 32)
+    anchor: new google.maps.Point(16, 32)
   };
   var mymarkerImg = {
-    url: 'http://opends.azurewebsites.net/img/icon/mymarker.png',
+    url: 'http://opends2.azurewebsites.net/img/icon/mymarker.png',
     size: new google.maps.Size(32, 32),
     origin: new google.maps.Point(0,0),
-    anchor: new google.maps.Point(0, 32)
+    anchor: new google.maps.Point(16, 32)
   };
 
 
@@ -152,53 +153,25 @@
 
   function hospitalSetup(map){
     for (var i = 0; i < hosMarkers.length; i++) {
-      IiMarker = hosMarkers[i];
-      IiMarker.setMap(map);
-      google.maps.event.addListener(IiMarker, 'click', function () {
-          titleArr = this.title.split(",");
-          HTMLDoc = titleArr[1];
-          var infowindow = new google.maps.InfoWindow({ content: hosContent[HTMLDoc] });
-          infowindow.open(map, this);
-      });
+      hosMarkers[i].setMap(map);
     }
     $("#hospital").addClass("active");
   }
   function policeSetup(map){
     for (var i = 0; i < polMarkers.length; i++) {
-      IiMarker = polMarkers[i];
-      IiMarker.setMap(map);
-      google.maps.event.addListener(IiMarker, 'click', function () {
-          titleArr = this.title.split(",");
-          HTMLDoc = titleArr[1];
-          var infowindow = new google.maps.InfoWindow({ content: polContent[HTMLDoc] });
-          infowindow.open(map, this);
-      });
+      polMarkers[i].setMap(map);
     }
     $("#police").addClass("active");
   }
   function shelterSetup(map){
     for (var i = 0; i < sheMarkers.length; i++) {
-      IiMarker = sheMarkers[i];
-      IiMarker.setMap(map);
-      google.maps.event.addListener(IiMarker, 'click', function () {
-          titleArr = this.title.split(",");
-          HTMLDoc = titleArr[1];
-          var infowindow = new google.maps.InfoWindow({ content: sheContent[HTMLDoc] });
-          infowindow.open(map, this);
-      });
+      sheMarkers[i].setMap(map);
     }
     $("#shelter").addClass("active");
   }
   function ambulanceSetup(map){
     for (var AID in ambContent){
-      IiMarker = ambMarkers[AID];
-      IiMarker.setMap(map);
-      google.maps.event.addListener(IiMarker, 'click', function () {
-          titleArr = this.title.split(",");
-          HTMLDoc = titleArr[0];
-          var infowindow = new google.maps.InfoWindow({ content: ambContent[HTMLDoc] });
-          infowindow.open(map, this);
-      });
+      ambMarkers[AID].setMap(map);
     }
     $("#ambulance").addClass("active");
   }
@@ -206,40 +179,21 @@
 
   function injuredSetup(map){
     for (var IID in injMarkers){
-      IiMarker = injMarkers[IID];
-      IiMarker.setMap(map);
-      google.maps.event.addListener(IiMarker, 'click', function () {
-          titleArr = this.title.split(",");
-          HTMLDoc = titleArr[0];
-          var infowindow = new google.maps.InfoWindow({ content: injContent[HTMLDoc] });
-          infowindow.open(map, this);
-      });
+      injMarkers[IID].setMap(map);
     }
     $("#injured").addClass("active");
   }
 
   function disasterSetup(map){
     for (var DID in disMarkers){
-      thisMarker = disMarkers[DID];
-      thisMarker.setMap(map);
-      google.maps.event.addListener(thisMarker, 'click', function () {
-          titleID = this.title;
-          var infowindow = new google.maps.InfoWindow({ content: disContent[titleID] });
-          infowindow.open(map, this);
-      });
+      disMarkers[DID].setMap(map);
     }
     $("#disaster").addClass("active");
   }
 
   function suppliesSetup(map){
     for (var SID in supMarkers){
-      thisMarker = supMarkers[SID];
-      thisMarker.setMap(map);
-      google.maps.event.addListener(thisMarker, 'click', function () {
-          titleID = this.title;
-          var infowindow = new google.maps.InfoWindow({ content: supContent[titleID] });
-          infowindow.open(map, this);
-      });
+      supMarkers[SID].setMap(map);
     }
     $("#supplies").addClass("active");
   }
@@ -264,8 +218,13 @@
           center: new google.maps.LatLng(25.040678,121.518969),
           'mapTypeId': google.maps.MapTypeId.ROADMAP
       };
+      var lolmapOptions = {
+          zoom: 15,
+          center: new google.maps.LatLng(25.033460, 121.565443),
+          'mapTypeId': google.maps.MapTypeId.ROADMAP
+      };
 
-      map = new google.maps.Map(document.getElementById('jumbotron'), TaipeimapOptions);
+      map = new google.maps.Map(document.getElementById('jumbotron'), lolmapOptions);
       directionsDisplay.setMap(map);
       if(!(typeof(MyMarker) == 'undefined' || MyMarker == null)){
         MyMarker.setMap(map);

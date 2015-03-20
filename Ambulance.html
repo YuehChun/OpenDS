@@ -1,4 +1,4 @@
-aa<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
   <meta charset="utf-8">
@@ -48,16 +48,21 @@ aa<!DOCTYPE html>
       personMarkers(map);
       disasterMarkers(map);
       suppliesMarkers(map);
-      
     }
 
-    setInterval(function() {
+    setInterval(function(map) {
+      if (SyncElems['hospital']) {hospitalStatus(); }
+      if (SyncElems['ambulance']) {ambulancebMarkers(map); }
+      if (SyncElems['person']) {personMarkers(map); }
+      if (SyncElems['injured']) {injuredStatus(); }
+      if (SyncElems['disaster']) {disasterStatus(); }
+      if (SyncElems['supplies']) {suppliesStatus(); }
       getLocation();
       sendAmbulancePoint();
     }, AutoTime);
 
   </script>
-  <script src="http://opends.azurewebsites.net/api/dynamic/getClientIp.php?callback=SysGetIP"></script>
+  <script src="http://opends2.azurewebsites.net/api/dynamic/getClientIp.php?callback=SysGetIP"></script>
   </head>
   <body>
 <div class="container">
@@ -175,7 +180,7 @@ aa<!DOCTYPE html>
                  <a class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-883245" href="#panel-element-77572">送醫資訊表單</a>
               </div>
               <div id="panel-element-77572" class="panel-collapse collapse">
-                <div class="panel-body" style="padding:11px;">
+                <div class="panel-body" style="padding:9px;">
                   <div id="InjuredInfo"></div>
                   <form role="form">
                     <fieldset disabled>

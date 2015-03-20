@@ -23,7 +23,7 @@
     function SysGetIP(IPjson) {
         $("body").mask("請求任務");
         IP=IPjson.IP;
-        $.get("http://opends.azurewebsites.net/api/dynamic/AmbulanceInit.php?IP="+IP,function( result ){
+        $.get("http://opends2.azurewebsites.net/api/dynamic/AmbulanceInit.php?IP="+IP,function( result ){
           var newID = JSON.parse(result);
           AmbID=newID.AmbulanceID;
           $("#LogID").html("NCHU-DMLab :: 救護車 :: "+ AmbID);
@@ -58,44 +58,55 @@
       loadTask(); 
     }
     function loadTask(){
-      $.get("http://opends.azurewebsites.net/api/dynamic/ambulanceTask.php?AmbID=" + AmbID , function( result ){
+      $.get("http://opends2.azurewebsites.net/api/dynamic/ambulanceTask.php?AmbID=" + AmbID , function( result ){
         var newTaskObj = JSON.parse(result);
-        waypts = [{
-          location: new google.maps.LatLng(newTaskObj.injured.lat,newTaskObj.injured.lng) ,
-          stopover: true
-        }];
-        request.origin = new google.maps.LatLng(newTaskObj.Amb.lat, newTaskObj.Amb.lng);
-        request.destination = new google.maps.LatLng(newTaskObj.hospital.lat, newTaskObj.hospital.lng);
-        request.waypoints = waypts;
-        $("#ArriveHospital").removeClass('disabled');
-        $("#ArriveHospital").attr("onclick","InjuredStatus('"+newTaskObj.injured.InjuredPeopleID+"','3')");
-        directionsService.route(request, function (response, status) {
-            if (status == google.maps.DirectionsStatus.OK) {
-              directionsDisplay.setDirections(response);
-              var LoadInfoMsg='<div class="alert alert-dismissable alert-info">'+
-                '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
-                '<h4>Get Task!</h4>' +
-                '<strong>Do Your Best!</strong> Get Task Time : '+ newTaskObj.time +
-              '!</div>';
-              var route = response.routes[0];
-              var Duration = "路程時間"+response.routes[0].legs[0].duration.text;
-              var PathCommand = '<h4>'+Duration+'</h4>';
-              // For each route, display summary information.
-              for (var i = 0; i < route.legs.length; i++) {
-                var routeSegment = i + 1;
-                PathCommand += '<b>路徑  ' + routeSegment + ': </b> <br>';
-                PathCommand += route.legs[i].start_address + ' to ';
-                PathCommand += route.legs[i].end_address + '<br>';
-                PathCommand += route.legs[i].distance.text + '<br><br>';
+        if(newTaskObj.injured=="Wait"){
+          var LoadInfoMsg='<div class="alert alert-dismissable alert-info">'+
+            '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+            '<h4>請稍候!</h4>' +
+            '<strong>目前沒有任務!10秒重新請求</strong> 訊息更新時間 : '+ newTaskObj.time +
+          '!</div>';
+          $("#taskCom").html(LoadInfoMsg);
+          setTimeout(function(){getTask();}, 10000);
+          // 10秒請求  未寫入
+        }else{
+          waypts = [{
+            location: new google.maps.LatLng(newTaskObj.injured.lat,newTaskObj.injured.lng) ,
+            stopover: true
+          }];
+          request.origin = new google.maps.LatLng(newTaskObj.Amb.lat, newTaskObj.Amb.lng);
+          request.destination = new google.maps.LatLng(newTaskObj.hospital.lat, newTaskObj.hospital.lng);
+          request.waypoints = waypts;
+          $("#ArriveHospital").removeClass('disabled');
+          $("#ArriveHospital").attr("onclick","InjuredStatus('"+newTaskObj.injured.InjuredPeopleID+"','3')");
+          directionsService.route(request, function (response, status) {
+              if (status == google.maps.DirectionsStatus.OK) {
+                directionsDisplay.setDirections(response);
+                var LoadInfoMsg='<div class="alert alert-dismissable alert-info">'+
+                  '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+                  '<h4>取得任務!</h4>' +
+                  '<strong>感謝您的付出!</strong> 取得任務時間 : '+ newTaskObj.time +
+                '!</div>';
+                var route = response.routes[0];
+                var Duration = "路程時間"+response.routes[0].legs[0].duration.text;
+                var PathCommand = '<h4>'+Duration+'</h4>';
+                // For each route, display summary information.
+                for (var i = 0; i < route.legs.length; i++) {
+                  var routeSegment = i + 1;
+                  PathCommand += '<b>路徑  ' + routeSegment + ': </b> <br>';
+                  PathCommand += route.legs[i].start_address + ' to ';
+                  PathCommand += route.legs[i].end_address + '<br>';
+                  PathCommand += route.legs[i].distance.text + '<br><br>';
+                }
+                $("#MainTask").unmask();
+                $("#taskCom").html(PathCommand);
+              }else{
+                // alert(JSON.stringify(response));
+                alert("ERROR");
               }
-              $("#MainTask").unmask();
-              $("#taskCom").html(PathCommand);
-            }else{
-              // alert(JSON.stringify(response));
-              alert("ERROR");
-            }
-        });
-        readInjured(newTaskObj.injured,newTaskObj.hospital.name);
+          });
+          readInjured(newTaskObj.injured,newTaskObj.hospital.name);
+        }
       });
     }
 
@@ -126,7 +137,7 @@
       var Sex = $("input[name='Injured_Sex']:checked").val();
 
       var Para = "Type=Amb&AmbID="+AmbID;
-      $.post("http://opends.azurewebsites.net/api/dynamic/amb2injured.php?" + Para ,{
+      $.post("http://opends2.azurewebsites.net/api/dynamic/amb2injured.php?" + Para ,{
         "InjID": InjID ,
         "Injured_Name": Injured_Name ,
         "Injured_Phone": Injured_Phone,
@@ -155,7 +166,7 @@
     }
 
     function InjuredStatus(injuredID,status){
-      $.post("http://opends.azurewebsites.net/api/dynamic/injuredProcess.php", {"status" : status , "AmbID": AmbID ,"IP" : IP,"InjID" : injuredID},function(result){
+      $.post("http://opends2.azurewebsites.net/api/dynamic/injuredProcess.php", {"status" : status , "AmbID": AmbID ,"IP" : IP,"InjID" : injuredID},function(result){
           var UpdateObj = JSON.parse(result);
           if(UpdateObj.status=="OK"){
             injMarkers[UpdateObj.InjID].setMap(null);
@@ -216,7 +227,7 @@
 
     function sendAmbulancePoint(){
       var Para = "AmbID="+AmbID+"&IP="+IP+"&lat="+lat+"&lng="+lng;
-      $.get("http://opends.azurewebsites.net/api/dynamic/AmbulancePoint.php?"+Para , function( result ){
+      $.get("http://opends2.azurewebsites.net/api/dynamic/AmbulancePoint.php?"+Para , function( result ){
         var LocationObj = JSON.parse(result);
         $("#UpTime_location").text(LocationObj.time);
       });

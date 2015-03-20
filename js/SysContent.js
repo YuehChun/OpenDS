@@ -44,7 +44,7 @@ function injInfo(val){
                       '</div></div>'+
                       '<div class="row clearfix">' +
                         '<div class="col-md-6 column text-center">' +
-                          '<button class="btn btn-info btn-xs" onclick="InjuredCancel(\''+val.InjID+'\');">以解除傷患點</button>'+
+                          '<button class="btn btn-info btn-xs" onclick="InjuredCancel(\''+val.InjID+'\');">解除傷患點</button>'+
                         '</div>' +
                         '<div class="col-md-6 column text-center">' +
                           '<button class="btn btn-danger btn-xs" onclick="InjuredStatus(\''+val.InjID+'\',\'2\');">送往醫院</button>'+

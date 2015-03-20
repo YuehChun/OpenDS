@@ -6,6 +6,7 @@ header('Content-Type: text/html; charset=utf-8');
 
 if ($_POST['InjID'] && $_POST['status'] == '2') {
 	if ($_conSQL->query("update InjuredPeople set status='2' where InjuredPeopleID='" . $_POST['InjID'] . "' and status='1' and AmbulanceID='" . $_POST['AmbID'] . "'")) {
+		$_conSQL->query("update InjuredReturnLog set inAmbulanceTime='" . date("Y-m-d H:i:s", time()) . "' where InjuredPeopleID='" . $_POST['InjID'] . "'");
 		$ReLog['InjID'] = $_POST['InjID'];
 		$ReLog['status'] = "OK";
 	} else {

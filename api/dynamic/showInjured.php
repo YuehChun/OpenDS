@@ -2,7 +2,7 @@
 header("Access-Control-Allow-Origin: *");
 include_once "../../../SQLinfo2.php";
 
-$SelectInfo = "R.InjuredPeopleID as InjID,R.datetime,I.name,I.sex,I.Contact,I.ContactPhone,I.status,R.injuredArea,R.injuredStatus,R.injuredCause ";
+$SelectInfo = "R.InjuredPeopleID as InjID,R.datetime,I.name,I.sex,I.Contact,I.ContactPhone,I.status,R.injuredArea,R.injuredStatus,R.injuredCause,R.toHospitalID ";
 $Status1 = $_conSQL->query("select " . $SelectInfo . " from InjuredReturnLog as R left join InjuredPeople as I on R.InjuredPeopleID=I.InjuredPeopleID where I.status ='1'")->fetchall(PDO::FETCH_ASSOC);
 $Status2 = $_conSQL->query("select " . $SelectInfo . " from InjuredReturnLog as R left join InjuredPeople as I on R.InjuredPeopleID=I.InjuredPeopleID where I.status ='2'")->fetchall(PDO::FETCH_ASSOC);
 $Status3 = $_conSQL->query("select " . $SelectInfo . " from InjuredReturnLog as R left join InjuredPeople as I on R.InjuredPeopleID=I.InjuredPeopleID where I.status ='3'")->fetchall(PDO::FETCH_ASSOC);
@@ -36,6 +36,7 @@ foreach ($ReLog as $top => $topLevel) {
 		$Cause = str_replace("1", "氣爆", $Cause);
 		$Cause = str_replace("2", "溺水", $Cause);
 		$Cause = str_replace("3", "跌倒", $Cause);
+		$Cause = str_replace("4", "不明", $Cause);
 		$ReLog[$top][$Key]['injuredCause'] = $Cause;
 
 		$ReLog[$top][$Key]['sex'] = is_null($Value['sex']) ? "未知" : ($Value['sex'] == 1) ? "男" : "女";
@@ -43,7 +44,8 @@ foreach ($ReLog as $top => $topLevel) {
 		$ReLog[$top][$Key]['Contact'] = $Value['Contact'] == "" ? "未知" : $Value['Contact'];
 		$ReLog[$top][$Key]['ContactPhone'] = $Value['ContactPhone'] == "" ? "未知" : $Value['ContactPhone'];
 		$ReLog[$top][$Key]['time'] = substr($Value['datetime'], 0, -4);
-
+		$Hos = $_conSQL->query("select name from DBhospital where ID='" . $Value['toHospitalID'] . "'")->fetch(PDO::FETCH_ASSOC);
+		$ReLog[$top][$Key]['Hname'] = $Hos['name'];
 		switch ($Value['status']) {
 			case '1':$ReLog[$top][$Key]['status'] = "等待救護車中";
 				break;

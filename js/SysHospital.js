@@ -8,12 +8,24 @@ myApp = myApp || (function () {
         hidePleaseWait: function () {
             pleaseWaitDiv.modal('hide');
         },
-
     };
 })();
 
 
 var userType="hos";
+
+var AutoTime = 5000;
+
+function MainPageTimeout() {
+    setTimeout(function () {
+        getInjured();
+        MainPageTimeout();
+    }, AutoTime);
+}
+getInjured();
+MainPageTimeout();
+
+
 function InjInfo(InjObj){
 	var ContentHTML=
 	'<div class="modal fade" id="modal-'+ InjObj.InjID +'" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">'+
@@ -33,6 +45,8 @@ function InjInfo(InjObj){
 							'<dt><p><span class="label label-info">聯絡資訊</span></p></dt>'+
 							'<dd>'+InjObj.Contact+'</dd>'+
 							'<dd>'+InjObj.ContactPhone+'</dd>'+
+							'<dt><p><span class="label label-info">醫院資訊</span></p></dt>'+
+							'<dd>'+InjObj.Hname+'</dd>'+
 							'<dt><p><span class="label label-danger">受傷區域</span></p></dt>' +
 							'<dd>'+InjObj.injuredArea+'</dd>'+
 							'<dt><p><span class="label label-danger">受傷狀況</span></p></dt>' +
@@ -61,7 +75,7 @@ function SearchInjured(){
 	var KeyWord = $("#SearchText").val();
 	var mySearch="";
 	var SearchContent="";
-	$.post("http://opends.azurewebsites.net/api/dynamic/searchInjured.php", {"PostKey" : KeyWord} ,function( result ){
+	$.post("http://opends2.azurewebsites.net/api/dynamic/searchInjured.php", {"PostKey" : KeyWord} ,function( result ){
         var InjuredSearch = JSON.parse(result);
         for(var S1 in InjuredSearch){
         	mySearch+=InjInfoLink(InjuredSearch[S1]);
@@ -71,8 +85,8 @@ function SearchInjured(){
 }
 
 function getInjured(){
-	myApp.showPleaseWait();
-	$.get("http://opends.azurewebsites.net/api/dynamic/showInjured.php", function(result){
+	// myApp.showPleaseWait();
+	$.get("http://opends2.azurewebsites.net/api/dynamic/showInjured.php", function(result){
         var InjuredObj = JSON.parse(result);
         var myStatus1=""
         var StatusContent=""
@@ -98,6 +112,6 @@ function getInjured(){
         }
         $("#Status3").html(myStatus3);
         $("#pushContent").html(StatusContent);
-		myApp.hidePleaseWait();
+		// myApp.hidePleaseWait();
     });
 }
